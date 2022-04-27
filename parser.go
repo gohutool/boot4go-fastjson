@@ -3,6 +3,7 @@ package fastjson
 import (
 	"fmt"
 	"github.com/gohutool/boot4go-fastjson/fastfloat"
+	"reflect"
 	"strconv"
 	"strings"
 	"unicode/utf16"
@@ -903,6 +904,32 @@ func (v *Value) GetUint64(keys ...string) uint64 {
 	return fastfloat.ParseUint64BestEffort(v.s)
 }
 
+// GetString returns string value by the given keys path.
+//
+// Array indexes may be represented as decimal numbers in keys.
+//
+// nil is returned for non-existing keys path or for invalid value type.
+//
+// The returned string is valid until Parse is called on the Parser returned v.
+func (v *Value) GetString(keys ...string) string {
+	v = v.Get(keys...)
+	if v == nil || v.Type() != TypeString {
+		if v == nil {
+			return ""
+		} else {
+			if v.Type() == TypeTrue {
+				return "true"
+			} else if v.Type() == TypeFalse {
+				return "false"
+			} else {
+				return v.s
+			}
+
+		}
+	}
+	return v.s
+}
+
 // GetStringBytes returns string value by the given keys path.
 //
 // Array indexes may be represented as decimal numbers in keys.
@@ -1025,7 +1052,7 @@ func (v *Value) Float64() (float64, error) {
 		if rtn, err := strconv.ParseFloat(v.s, 64); err == nil {
 			return rtn, nil
 		} else {
-			return 0, fmt.Errorf("number %q doesn't fit float64", v.s)
+			return 0, fmt.Errorf("%q doesn't fit float64", v.s)
 		}
 	}
 	return fastfloat.Parse(v.s)
@@ -1046,7 +1073,7 @@ func (v *Value) Int() (int, error) {
 		if rtn, err := strconv.ParseInt(v.s, 10, 0); err == nil {
 			return int(rtn), nil
 		} else {
-			return 0, fmt.Errorf("number %q doesn't fit int", v.s)
+			return 0, fmt.Errorf("%q doesn't fit int", v.s)
 		}
 	}
 	n, err := fastfloat.ParseInt64(v.s)
@@ -1055,7 +1082,7 @@ func (v *Value) Int() (int, error) {
 	}
 	nn := int(n)
 	if int64(nn) != n {
-		return 0, fmt.Errorf("number %q doesn't fit int", v.s)
+		return 0, fmt.Errorf("%q doesn't fit int", v.s)
 	}
 	return nn, nil
 }
@@ -1075,7 +1102,7 @@ func (v *Value) Uint() (uint, error) {
 		if rtn, err := strconv.ParseUint(v.s, 10, 0); err == nil {
 			return uint(rtn), nil
 		} else {
-			return 0, fmt.Errorf("number %q doesn't fit uint", v.s)
+			return 0, fmt.Errorf("%q doesn't fit uint", v.s)
 		}
 	}
 	n, err := fastfloat.ParseUint64(v.s)
@@ -1084,7 +1111,7 @@ func (v *Value) Uint() (uint, error) {
 	}
 	nn := uint(n)
 	if uint64(nn) != n {
-		return 0, fmt.Errorf("number %q doesn't fit uint", v.s)
+		return 0, fmt.Errorf("%q doesn't fit uint", v.s)
 	}
 	return nn, nil
 }
@@ -1101,7 +1128,7 @@ func (v *Value) Uint64() (uint64, error) {
 		if rtn, err := strconv.ParseUint(v.s, 10, 64); err == nil {
 			return rtn, nil
 		} else {
-			return 0, fmt.Errorf("number %q doesn't fit uint64", v.s)
+			return 0, fmt.Errorf("%q doesn't fit uint64", v.s)
 		}
 	}
 	n, err := fastfloat.ParseUint64(v.s)
@@ -1110,7 +1137,7 @@ func (v *Value) Uint64() (uint64, error) {
 	}
 	nn := uint64(n)
 	if uint64(nn) != n {
-		return 0, fmt.Errorf("number %q doesn't fit uint", v.s)
+		return 0, fmt.Errorf("%q doesn't fit uint", v.s)
 	}
 	return nn, nil
 }
@@ -1130,7 +1157,7 @@ func (v *Value) Int64() (int64, error) {
 		if rtn, err := strconv.ParseInt(v.s, 10, 64); err == nil {
 			return rtn, nil
 		} else {
-			return 0, fmt.Errorf("number %q doesn't fit int64", v.s)
+			return 0, fmt.Errorf("%q doesn't fit int64", v.s)
 		}
 	}
 	return fastfloat.ParseInt64(v.s)
@@ -1151,7 +1178,7 @@ func (v *Value) Bool() (bool, error) {
 		if rtn, err := strconv.Atoi(v.s); err == nil {
 			return rtn > 0, nil
 		} else {
-			return false, fmt.Errorf("number %q doesn't fit bool", v.s)
+			return false, fmt.Errorf("%q doesn't fit bool", v.s)
 		}
 	}
 
@@ -1164,7 +1191,7 @@ func (v *Value) Bool() (bool, error) {
 			if rtn, err := strconv.Atoi(v.s); err == nil {
 				return rtn > 0, nil
 			} else {
-				return false, fmt.Errorf("number %q doesn't fit bool", v.s)
+				return false, fmt.Errorf("%q doesn't fit bool", v.s)
 			}
 		}
 	}
@@ -1202,5 +1229,38 @@ func UnmarshallObject(s string, obj Unmarshallable) error {
 		return err
 	} else {
 		return Unmarshall(*v, obj)
+	}
+}
+
+func UnmarshallObjectList[T Unmarshallable](value Value, obj T) ([]T, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			t := reflect.TypeOf(obj)
+
+			isPtr := t.Kind() == reflect.Pointer
+
+			rtn := make([]T, 0, len(values))
+
+			for _, v := range values {
+				if isPtr {
+					inst := reflect.New(t.Elem()).Interface().(T)
+					inst.Unmarshall(*v)
+					rtn = append(rtn, inst)
+				} else {
+					inst := reflect.New(t).Interface().(Unmarshallable)
+					inst.Unmarshall(*v)
+					rtn = append(rtn, reflect.ValueOf(inst).Elem().Interface().(T))
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
