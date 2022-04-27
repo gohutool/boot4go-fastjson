@@ -759,6 +759,16 @@ func (v *Value) GetArray(keys ...string) []*Value {
 func (v *Value) GetFloat64(keys ...string) float64 {
 	v = v.Get(keys...)
 	if v == nil || v.Type() != TypeNumber {
+		if v == nil {
+			return 0
+		} else {
+			if rtn, err := strconv.ParseFloat(v.s, 64); err == nil {
+				return rtn
+			} else {
+				return 0
+			}
+		}
+
 		return 0
 	}
 	return fastfloat.ParseBestEffort(v.s)
@@ -772,7 +782,15 @@ func (v *Value) GetFloat64(keys ...string) float64 {
 func (v *Value) GetInt(keys ...string) int {
 	v = v.Get(keys...)
 	if v == nil || v.Type() != TypeNumber {
-		return 0
+		if v == nil {
+			return 0
+		} else {
+			if rtn, err := strconv.Atoi(v.s); err == nil {
+				return rtn
+			} else {
+				return 0
+			}
+		}
 	}
 	n := fastfloat.ParseInt64BestEffort(v.s)
 	nn := int(n)
@@ -790,7 +808,15 @@ func (v *Value) GetInt(keys ...string) int {
 func (v *Value) GetUint(keys ...string) uint {
 	v = v.Get(keys...)
 	if v == nil || v.Type() != TypeNumber {
-		return 0
+		if v == nil {
+			return 0
+		} else {
+			if rtn, err := strconv.ParseUint(v.s, 10, 0); err == nil {
+				return uint(rtn)
+			} else {
+				return 0
+			}
+		}
 	}
 	n := fastfloat.ParseUint64BestEffort(v.s)
 	nn := uint(n)
@@ -808,7 +834,15 @@ func (v *Value) GetUint(keys ...string) uint {
 func (v *Value) GetInt64(keys ...string) int64 {
 	v = v.Get(keys...)
 	if v == nil || v.Type() != TypeNumber {
-		return 0
+		if v == nil {
+			return 0
+		} else {
+			if rtn, err := strconv.ParseInt(v.s, 10, 64); err == nil {
+				return rtn
+			} else {
+				return 0
+			}
+		}
 	}
 	return fastfloat.ParseInt64BestEffort(v.s)
 }
@@ -821,7 +855,15 @@ func (v *Value) GetInt64(keys ...string) int64 {
 func (v *Value) GetUint64(keys ...string) uint64 {
 	v = v.Get(keys...)
 	if v == nil || v.Type() != TypeNumber {
-		return 0
+		if v == nil {
+			return 0
+		} else {
+			if rtn, err := strconv.ParseUint(v.s, 10, 64); err == nil {
+				return rtn
+			} else {
+				return 0
+			}
+		}
 	}
 	return fastfloat.ParseUint64BestEffort(v.s)
 }
@@ -836,7 +878,11 @@ func (v *Value) GetUint64(keys ...string) uint64 {
 func (v *Value) GetStringBytes(keys ...string) []byte {
 	v = v.Get(keys...)
 	if v == nil || v.Type() != TypeString {
-		return nil
+		if v == nil {
+			return nil
+		} else {
+			return s2b(v.s)
+		}
 	}
 	return s2b(v.s)
 }
@@ -851,7 +897,24 @@ func (v *Value) GetBool(keys ...string) bool {
 	if v != nil && v.t == TypeTrue {
 		return true
 	}
-	return false
+
+	if v.t == TypeFalse {
+		return false
+	}
+
+	if v.t == TypeNumber {
+		if rtn, err := strconv.Atoi(v.s); err == nil {
+			return false
+		} else {
+			return rtn > 0
+		}
+	}
+
+	if v.s == "true" || v.s == "True" || v.s == "On" || v.s == "on" {
+		return true
+	} else {
+		return false
+	}
 }
 
 // Object returns the underlying JSON object for the v.
@@ -895,7 +958,11 @@ func (v *Value) StringBytes() ([]byte, error) {
 // Use GetFloat64 if you don't need error handling.
 func (v *Value) Float64() (float64, error) {
 	if v.Type() != TypeNumber {
-		return 0, fmt.Errorf("value doesn't contain number; it contains %s", v.Type())
+		if rtn, err := strconv.ParseFloat(v.s, 64); err == nil {
+			return rtn, nil
+		} else {
+			return 0, fmt.Errorf("number %q doesn't fit float64", v.s)
+		}
 	}
 	return fastfloat.Parse(v.s)
 }
@@ -905,7 +972,11 @@ func (v *Value) Float64() (float64, error) {
 // Use GetInt if you don't need error handling.
 func (v *Value) Int() (int, error) {
 	if v.Type() != TypeNumber {
-		return 0, fmt.Errorf("value doesn't contain number; it contains %s", v.Type())
+		if rtn, err := strconv.ParseInt(v.s, 10, 0); err == nil {
+			return int(rtn), nil
+		} else {
+			return 0, fmt.Errorf("number %q doesn't fit int", v.s)
+		}
 	}
 	n, err := fastfloat.ParseInt64(v.s)
 	if err != nil {
@@ -923,7 +994,11 @@ func (v *Value) Int() (int, error) {
 // Use GetInt if you don't need error handling.
 func (v *Value) Uint() (uint, error) {
 	if v.Type() != TypeNumber {
-		return 0, fmt.Errorf("value doesn't contain number; it contains %s", v.Type())
+		if rtn, err := strconv.ParseUint(v.s, 10, 0); err == nil {
+			return uint(rtn), nil
+		} else {
+			return 0, fmt.Errorf("number %q doesn't fit uint", v.s)
+		}
 	}
 	n, err := fastfloat.ParseUint64(v.s)
 	if err != nil {
@@ -936,24 +1011,38 @@ func (v *Value) Uint() (uint, error) {
 	return nn, nil
 }
 
+// Uint64 returns the underlying JSON uint for the v.
+func (v *Value) Uint64() (uint64, error) {
+	if v.Type() != TypeNumber {
+		if rtn, err := strconv.ParseUint(v.s, 10, 64); err == nil {
+			return rtn, nil
+		} else {
+			return 0, fmt.Errorf("number %q doesn't fit uint64", v.s)
+		}
+	}
+	n, err := fastfloat.ParseUint64(v.s)
+	if err != nil {
+		return 0, err
+	}
+	nn := uint64(n)
+	if uint64(nn) != n {
+		return 0, fmt.Errorf("number %q doesn't fit uint", v.s)
+	}
+	return nn, nil
+}
+
 // Int64 returns the underlying JSON int64 for the v.
 //
 // Use GetInt64 if you don't need error handling.
 func (v *Value) Int64() (int64, error) {
 	if v.Type() != TypeNumber {
-		return 0, fmt.Errorf("value doesn't contain number; it contains %s", v.Type())
+		if rtn, err := strconv.ParseInt(v.s, 10, 64); err == nil {
+			return rtn, nil
+		} else {
+			return 0, fmt.Errorf("number %q doesn't fit int64", v.s)
+		}
 	}
 	return fastfloat.ParseInt64(v.s)
-}
-
-// Uint64 returns the underlying JSON uint64 for the v.
-//
-// Use GetInt64 if you don't need error handling.
-func (v *Value) Uint64() (uint64, error) {
-	if v.Type() != TypeNumber {
-		return 0, fmt.Errorf("value doesn't contain number; it contains %s", v.Type())
-	}
-	return fastfloat.ParseUint64(v.s)
 }
 
 // Bool returns the underlying JSON bool for the v.
@@ -966,7 +1055,14 @@ func (v *Value) Bool() (bool, error) {
 	if v.t == TypeFalse {
 		return false, nil
 	}
-	return false, fmt.Errorf("value doesn't contain bool; it contains %s", v.Type())
+
+	if rtn, err := strconv.ParseBool(v.s); err == nil {
+		return rtn, nil
+	} else {
+		return false, fmt.Errorf("number %q doesn't fit bool", v.s)
+	}
+	//
+	//return false, fmt.Errorf("value doesn't contain bool; it contains %s", v.Type())
 }
 
 var (
