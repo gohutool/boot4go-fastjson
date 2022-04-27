@@ -1305,3 +1305,511 @@ func UnmarshallObjectList[T Unmarshallable](value Value, obj T) ([]T, error) {
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
+
+func ParseBoolList(json string) ([]bool, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallBoolList(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func ParseBoolMap(json string) (map[string]bool, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallBoolMap(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallBoolMap(value Value) (map[string]bool, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			rtn := make(map[string]bool)
+
+			for _, v := range values.kvs {
+				if o, err := v.v.Bool(); err == nil {
+					rtn[v.k] = o
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
+
+func UnmarshallBoolList(value Value) ([]bool, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
+
+			rtn := make([]bool, 0, len(values))
+
+			for _, v := range values {
+				if r, err := v.Bool(); err == nil {
+					rtn = append(rtn, r)
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
+	}
+}
+func ParseInt64List(json string) ([]int64, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallInt64List(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func ParseInt64Map(json string) (map[string]int64, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallInt64Map(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallInt64Map(value Value) (map[string]int64, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			rtn := make(map[string]int64)
+
+			for _, v := range values.kvs {
+				if o, err := v.v.Int64(); err == nil {
+					rtn[v.k] = o
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
+
+func UnmarshallInt64List(value Value) ([]int64, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
+
+			rtn := make([]int64, 0, len(values))
+
+			for _, v := range values {
+				if r, err := v.Int64(); err == nil {
+					rtn = append(rtn, r)
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
+	}
+}
+
+func ParseIntList(json string) ([]int, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallIntList(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func ParseIntMap(json string) (map[string]int, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallIntMap(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallIntMap(value Value) (map[string]int, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			rtn := make(map[string]int)
+
+			for _, v := range values.kvs {
+				if o, err := v.v.Int(); err == nil {
+					rtn[v.k] = o
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
+
+func UnmarshallIntList(value Value) ([]int, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
+
+			rtn := make([]int, 0, len(values))
+
+			for _, v := range values {
+				if r, err := v.Int(); err == nil {
+					rtn = append(rtn, r)
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
+	}
+}
+
+func ParseUintList(json string) ([]uint, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallUintList(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func ParseUintMap(json string) (map[string]uint, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallUintMap(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallUintMap(value Value) (map[string]uint, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			rtn := make(map[string]uint)
+
+			for _, v := range values.kvs {
+				if o, err := v.v.Uint(); err == nil {
+					rtn[v.k] = o
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
+
+func UnmarshallUintList(value Value) ([]uint, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
+
+			rtn := make([]uint, 0, len(values))
+
+			for _, v := range values {
+				if r, err := v.Uint(); err == nil {
+					rtn = append(rtn, r)
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
+	}
+}
+
+func ParseUint64List(json string) ([]uint64, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallUint64List(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func ParseUint64Map(json string) (map[string]uint64, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallUint64Map(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallUint64Map(value Value) (map[string]uint64, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			rtn := make(map[string]uint64)
+
+			for _, v := range values.kvs {
+				if o, err := v.v.Uint64(); err == nil {
+					rtn[v.k] = o
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
+
+func UnmarshallUint64List(value Value) ([]uint64, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
+
+			rtn := make([]uint64, 0, len(values))
+
+			for _, v := range values {
+				if r, err := v.Uint64(); err == nil {
+					rtn = append(rtn, r)
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
+	}
+}
+func ParseFloat64List(json string) ([]float64, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallFloat64List(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func ParseFloat64Map(json string) (map[string]float64, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallFloat64Map(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallFloat64Map(value Value) (map[string]float64, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			rtn := make(map[string]float64)
+
+			for _, v := range values.kvs {
+				if o, err := v.v.Float64(); err == nil {
+					rtn[v.k] = o
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
+
+func UnmarshallFloat64List(value Value) ([]float64, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
+
+			rtn := make([]float64, 0, len(values))
+
+			for _, v := range values {
+				if r, err := v.Float64(); err == nil {
+					rtn = append(rtn, r)
+				} else {
+					return rtn, err
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
+	}
+}
+
+func ParseStringList(json string) ([]string, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallStringList(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallStringList(value Value) ([]string, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeArray {
+		if values, err := value.Array(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
+
+			rtn := make([]string, 0, len(values))
+
+			for _, v := range values {
+				rtn = append(rtn, v.s)
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
+	}
+}
+
+func ParseStringMap(json string) (map[string]string, error) {
+	if v, err := UnmarshallJson(json); err == nil {
+		return UnmarshallStringMap(*v)
+	} else {
+		return nil, err
+	}
+}
+
+func UnmarshallStringMap(value Value) (map[string]string, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			rtn := make(map[string]string)
+
+			for _, v := range values.kvs {
+				rtn[v.k] = v.v.s
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
