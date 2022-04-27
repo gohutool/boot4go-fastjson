@@ -762,6 +762,13 @@ func (v *Value) GetFloat64(keys ...string) float64 {
 		if v == nil {
 			return 0
 		} else {
+
+			if v.Type() == TypeTrue {
+				return 1
+			} else if v.Type() == TypeFalse {
+				return 0
+			}
+
 			if rtn, err := strconv.ParseFloat(v.s, 64); err == nil {
 				return rtn
 			} else {
@@ -785,6 +792,13 @@ func (v *Value) GetInt(keys ...string) int {
 		if v == nil {
 			return 0
 		} else {
+
+			if v.Type() == TypeTrue {
+				return 1
+			} else if v.Type() == TypeFalse {
+				return 0
+			}
+
 			if rtn, err := strconv.Atoi(v.s); err == nil {
 				return rtn
 			} else {
@@ -811,6 +825,13 @@ func (v *Value) GetUint(keys ...string) uint {
 		if v == nil {
 			return 0
 		} else {
+
+			if v.Type() == TypeTrue {
+				return 1
+			} else if v.Type() == TypeFalse {
+				return 0
+			}
+
 			if rtn, err := strconv.ParseUint(v.s, 10, 0); err == nil {
 				return uint(rtn)
 			} else {
@@ -837,6 +858,13 @@ func (v *Value) GetInt64(keys ...string) int64 {
 		if v == nil {
 			return 0
 		} else {
+
+			if v.Type() == TypeTrue {
+				return 1
+			} else if v.Type() == TypeFalse {
+				return 0
+			}
+
 			if rtn, err := strconv.ParseInt(v.s, 10, 64); err == nil {
 				return rtn
 			} else {
@@ -858,6 +886,13 @@ func (v *Value) GetUint64(keys ...string) uint64 {
 		if v == nil {
 			return 0
 		} else {
+
+			if v.Type() == TypeTrue {
+				return 1
+			} else if v.Type() == TypeFalse {
+				return 0
+			}
+
 			if rtn, err := strconv.ParseUint(v.s, 10, 64); err == nil {
 				return rtn
 			} else {
@@ -881,7 +916,14 @@ func (v *Value) GetStringBytes(keys ...string) []byte {
 		if v == nil {
 			return nil
 		} else {
-			return s2b(v.s)
+			if v.Type() == TypeTrue {
+				return s2b("true")
+			} else if v.Type() == TypeFalse {
+				return s2b("false")
+			} else {
+				return s2b(v.s)
+			}
+
 		}
 	}
 	return s2b(v.s)
@@ -904,16 +946,25 @@ func (v *Value) GetBool(keys ...string) bool {
 
 	if v.t == TypeNumber {
 		if rtn, err := strconv.Atoi(v.s); err == nil {
-			return false
-		} else {
 			return rtn > 0
+		} else {
+			return false
 		}
 	}
 
 	if v.s == "true" || v.s == "True" || v.s == "On" || v.s == "on" {
 		return true
 	} else {
-		return false
+
+		if rtn, err := strconv.ParseBool(v.s); err == nil {
+			return rtn
+		} else {
+			if rtn, err := strconv.Atoi(v.s); err == nil {
+				return rtn > 0
+			} else {
+				return false
+			}
+		}
 	}
 }
 
@@ -948,7 +999,13 @@ func (v *Value) Array() ([]*Value, error) {
 // Use GetStringBytes if you don't need error handling.
 func (v *Value) StringBytes() ([]byte, error) {
 	if v.Type() != TypeString {
-		return nil, fmt.Errorf("value doesn't contain string; it contains %s", v.Type())
+		if v.Type() == TypeTrue {
+			return s2b("true"), nil
+		} else if v.Type() == TypeFalse {
+			return s2b("false"), nil
+		} else {
+			return s2b(v.s), nil
+		}
 	}
 	return s2b(v.s), nil
 }
@@ -958,6 +1015,13 @@ func (v *Value) StringBytes() ([]byte, error) {
 // Use GetFloat64 if you don't need error handling.
 func (v *Value) Float64() (float64, error) {
 	if v.Type() != TypeNumber {
+
+		if v.Type() == TypeTrue {
+			return 1, nil
+		} else if v.Type() == TypeFalse {
+			return 0, nil
+		}
+
 		if rtn, err := strconv.ParseFloat(v.s, 64); err == nil {
 			return rtn, nil
 		} else {
@@ -972,6 +1036,13 @@ func (v *Value) Float64() (float64, error) {
 // Use GetInt if you don't need error handling.
 func (v *Value) Int() (int, error) {
 	if v.Type() != TypeNumber {
+
+		if v.Type() == TypeTrue {
+			return 1, nil
+		} else if v.Type() == TypeFalse {
+			return 0, nil
+		}
+
 		if rtn, err := strconv.ParseInt(v.s, 10, 0); err == nil {
 			return int(rtn), nil
 		} else {
@@ -994,6 +1065,13 @@ func (v *Value) Int() (int, error) {
 // Use GetInt if you don't need error handling.
 func (v *Value) Uint() (uint, error) {
 	if v.Type() != TypeNumber {
+
+		if v.Type() == TypeTrue {
+			return 1, nil
+		} else if v.Type() == TypeFalse {
+			return 0, nil
+		}
+
 		if rtn, err := strconv.ParseUint(v.s, 10, 0); err == nil {
 			return uint(rtn), nil
 		} else {
@@ -1014,6 +1092,12 @@ func (v *Value) Uint() (uint, error) {
 // Uint64 returns the underlying JSON uint for the v.
 func (v *Value) Uint64() (uint64, error) {
 	if v.Type() != TypeNumber {
+		if v.Type() == TypeTrue {
+			return 1, nil
+		} else if v.Type() == TypeFalse {
+			return 0, nil
+		}
+
 		if rtn, err := strconv.ParseUint(v.s, 10, 64); err == nil {
 			return rtn, nil
 		} else {
@@ -1036,6 +1120,13 @@ func (v *Value) Uint64() (uint64, error) {
 // Use GetInt64 if you don't need error handling.
 func (v *Value) Int64() (int64, error) {
 	if v.Type() != TypeNumber {
+
+		if v.Type() == TypeTrue {
+			return 1, nil
+		} else if v.Type() == TypeFalse {
+			return 0, nil
+		}
+
 		if rtn, err := strconv.ParseInt(v.s, 10, 64); err == nil {
 			return rtn, nil
 		} else {
@@ -1056,11 +1147,28 @@ func (v *Value) Bool() (bool, error) {
 		return false, nil
 	}
 
-	if rtn, err := strconv.ParseBool(v.s); err == nil {
-		return rtn, nil
-	} else {
-		return false, fmt.Errorf("number %q doesn't fit bool", v.s)
+	if v.t == TypeNumber {
+		if rtn, err := strconv.Atoi(v.s); err == nil {
+			return rtn > 0, nil
+		} else {
+			return false, fmt.Errorf("number %q doesn't fit bool", v.s)
+		}
 	}
+
+	if v.s == "true" || v.s == "True" || v.s == "On" || v.s == "on" {
+		return true, nil
+	} else {
+		if rtn, err := strconv.ParseBool(v.s); err == nil {
+			return rtn, nil
+		} else {
+			if rtn, err := strconv.Atoi(v.s); err == nil {
+				return rtn > 0, nil
+			} else {
+				return false, fmt.Errorf("number %q doesn't fit bool", v.s)
+			}
+		}
+	}
+
 	//
 	//return false, fmt.Errorf("value doesn't contain bool; it contains %s", v.Type())
 }

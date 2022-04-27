@@ -25,17 +25,18 @@ type JsonObj struct {
 type Test struct {
 	Name string `json:"name"`
 	Age  int    `json:"age"`
+	Ok   bool   `json:"ok"`
 }
 
 func (t *Test) Unmarshall(value Value) error {
 	t.Name = string(value.GetStringBytes("name"))
 	t.Age = value.GetInt("age")
-	value.Int()
+	t.Ok = value.GetBool("ok")
 	return nil
 }
 
 func TestJsonOne(t *testing.T) {
-	str := "{\"name\":\"DavidLiu\", \"age\":\"2\"}"
+	str := "{\"name\":120, \"age\":\"2\", \"ok\":\"on\"}"
 
 	//test := &Test{Name: "AAA", Age: 10}
 	test := &Test{}
