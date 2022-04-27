@@ -1232,6 +1232,43 @@ func UnmarshallObject(s string, obj Unmarshallable) error {
 	}
 }
 
+func UnmarshallObjectMap[T Unmarshallable](value Value, obj T) (map[string]T, error) {
+	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+
+	if value.Type() == TypeObject {
+		if values, err := value.Object(); err != nil {
+			return nil, err
+		} else {
+
+			if values == nil || len(values.kvs) == 0 {
+				return nil, nil
+			}
+
+			t := reflect.TypeOf(obj)
+
+			isPtr := t.Kind() == reflect.Pointer
+
+			rtn := make(map[string]T)
+
+			for _, v := range values.kvs {
+				if isPtr {
+					inst := reflect.New(t.Elem()).Interface().(T)
+					inst.Unmarshall(*(v.v))
+					rtn[v.k] = inst
+				} else {
+					inst := reflect.New(t).Interface().(Unmarshallable)
+					inst.Unmarshall(*(v.v))
+					rtn[v.k] = reflect.ValueOf(inst).Elem().Interface().(T)
+				}
+			}
+
+			return rtn, nil
+		}
+	} else {
+		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
+	}
+}
+
 func UnmarshallObjectList[T Unmarshallable](value Value, obj T) ([]T, error) {
 	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
 
@@ -1239,6 +1276,10 @@ func UnmarshallObjectList[T Unmarshallable](value Value, obj T) ([]T, error) {
 		if values, err := value.Array(); err != nil {
 			return nil, err
 		} else {
+
+			if values == nil || len(values) == 0 {
+				return nil, nil
+			}
 
 			t := reflect.TypeOf(obj)
 
