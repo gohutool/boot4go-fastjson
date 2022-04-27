@@ -1206,34 +1206,34 @@ var (
 	valueNull  = &Value{t: TypeNull}
 )
 
-type Unmarshallable interface {
-	Unmarshall(value Value) error
+type Unmarshalable interface {
+	Unmarshal(value Value) error
 }
 
-func Unmarshall(value Value, obj Unmarshallable) error {
-	return obj.Unmarshall(value)
+func Unmarshal(value Value, obj Unmarshalable) error {
+	return obj.Unmarshal(value)
 }
 
-func UnmarshallJson(s string) (*Value, error) {
+func UnmarshalJson(s string) (*Value, error) {
 	var p Parser
 	return p.Parse(s)
 }
 
-func UnmarshallObject(s string, obj Unmarshallable) error {
+func UnmarshalObject(s string, obj Unmarshalable) error {
 	if obj == nil {
-		panic("Nil object can not unmarshall")
+		panic("Nil object can not unmarshal")
 	}
 
 	var p Parser
 	if v, err := p.Parse(s); err != nil {
 		return err
 	} else {
-		return Unmarshall(*v, obj)
+		return Unmarshal(*v, obj)
 	}
 }
 
-func UnmarshallObjectMap[T Unmarshallable](value Value, obj T) (map[string]T, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalObjectMap[T Unmarshalable](value Value, obj T) (map[string]T, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {
@@ -1253,11 +1253,11 @@ func UnmarshallObjectMap[T Unmarshallable](value Value, obj T) (map[string]T, er
 			for _, v := range values.kvs {
 				if isPtr {
 					inst := reflect.New(t.Elem()).Interface().(T)
-					inst.Unmarshall(*(v.v))
+					inst.Unmarshal(*(v.v))
 					rtn[v.k] = inst
 				} else {
-					inst := reflect.New(t).Interface().(Unmarshallable)
-					inst.Unmarshall(*(v.v))
+					inst := reflect.New(t).Interface().(Unmarshalable)
+					inst.Unmarshal(*(v.v))
 					rtn[v.k] = reflect.ValueOf(inst).Elem().Interface().(T)
 				}
 			}
@@ -1269,8 +1269,8 @@ func UnmarshallObjectMap[T Unmarshallable](value Value, obj T) (map[string]T, er
 	}
 }
 
-func UnmarshallObjectList[T Unmarshallable](value Value, obj T) ([]T, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalObjectList[T Unmarshalable](value Value, obj T) ([]T, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1290,11 +1290,11 @@ func UnmarshallObjectList[T Unmarshallable](value Value, obj T) ([]T, error) {
 			for _, v := range values {
 				if isPtr {
 					inst := reflect.New(t.Elem()).Interface().(T)
-					inst.Unmarshall(*v)
+					inst.Unmarshal(*v)
 					rtn = append(rtn, inst)
 				} else {
-					inst := reflect.New(t).Interface().(Unmarshallable)
-					inst.Unmarshall(*v)
+					inst := reflect.New(t).Interface().(Unmarshalable)
+					inst.Unmarshal(*v)
 					rtn = append(rtn, reflect.ValueOf(inst).Elem().Interface().(T))
 				}
 			}
@@ -1307,23 +1307,23 @@ func UnmarshallObjectList[T Unmarshallable](value Value, obj T) ([]T, error) {
 }
 
 func ParseBoolList(json string) ([]bool, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallBoolList(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalBoolList(*v)
 	} else {
 		return nil, err
 	}
 }
 
 func ParseBoolMap(json string) (map[string]bool, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallBoolMap(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalBoolMap(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallBoolMap(value Value) (map[string]bool, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalBoolMap(value Value) (map[string]bool, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {
@@ -1351,8 +1351,8 @@ func UnmarshallBoolMap(value Value) (map[string]bool, error) {
 	}
 }
 
-func UnmarshallBoolList(value Value) ([]bool, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalBoolList(value Value) ([]bool, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1380,23 +1380,23 @@ func UnmarshallBoolList(value Value) ([]bool, error) {
 	}
 }
 func ParseInt64List(json string) ([]int64, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallInt64List(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalInt64List(*v)
 	} else {
 		return nil, err
 	}
 }
 
 func ParseInt64Map(json string) (map[string]int64, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallInt64Map(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalInt64Map(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallInt64Map(value Value) (map[string]int64, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalInt64Map(value Value) (map[string]int64, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {
@@ -1424,8 +1424,8 @@ func UnmarshallInt64Map(value Value) (map[string]int64, error) {
 	}
 }
 
-func UnmarshallInt64List(value Value) ([]int64, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalInt64List(value Value) ([]int64, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1454,23 +1454,23 @@ func UnmarshallInt64List(value Value) ([]int64, error) {
 }
 
 func ParseIntList(json string) ([]int, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallIntList(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalIntList(*v)
 	} else {
 		return nil, err
 	}
 }
 
 func ParseIntMap(json string) (map[string]int, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallIntMap(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalIntMap(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallIntMap(value Value) (map[string]int, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalIntMap(value Value) (map[string]int, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {
@@ -1498,8 +1498,8 @@ func UnmarshallIntMap(value Value) (map[string]int, error) {
 	}
 }
 
-func UnmarshallIntList(value Value) ([]int, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalIntList(value Value) ([]int, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1528,23 +1528,23 @@ func UnmarshallIntList(value Value) ([]int, error) {
 }
 
 func ParseUintList(json string) ([]uint, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallUintList(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalUintList(*v)
 	} else {
 		return nil, err
 	}
 }
 
 func ParseUintMap(json string) (map[string]uint, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallUintMap(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalUintMap(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallUintMap(value Value) (map[string]uint, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalUintMap(value Value) (map[string]uint, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {
@@ -1572,8 +1572,8 @@ func UnmarshallUintMap(value Value) (map[string]uint, error) {
 	}
 }
 
-func UnmarshallUintList(value Value) ([]uint, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalUintList(value Value) ([]uint, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1602,23 +1602,23 @@ func UnmarshallUintList(value Value) ([]uint, error) {
 }
 
 func ParseUint64List(json string) ([]uint64, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallUint64List(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalUint64List(*v)
 	} else {
 		return nil, err
 	}
 }
 
 func ParseUint64Map(json string) (map[string]uint64, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallUint64Map(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalUint64Map(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallUint64Map(value Value) (map[string]uint64, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalUint64Map(value Value) (map[string]uint64, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {
@@ -1646,8 +1646,8 @@ func UnmarshallUint64Map(value Value) (map[string]uint64, error) {
 	}
 }
 
-func UnmarshallUint64List(value Value) ([]uint64, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalUint64List(value Value) ([]uint64, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1675,23 +1675,23 @@ func UnmarshallUint64List(value Value) ([]uint64, error) {
 	}
 }
 func ParseFloat64List(json string) ([]float64, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallFloat64List(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalFloat64List(*v)
 	} else {
 		return nil, err
 	}
 }
 
 func ParseFloat64Map(json string) (map[string]float64, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallFloat64Map(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalFloat64Map(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallFloat64Map(value Value) (map[string]float64, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalFloat64Map(value Value) (map[string]float64, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {
@@ -1719,8 +1719,8 @@ func UnmarshallFloat64Map(value Value) (map[string]float64, error) {
 	}
 }
 
-func UnmarshallFloat64List(value Value) ([]float64, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalFloat64List(value Value) ([]float64, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1749,15 +1749,15 @@ func UnmarshallFloat64List(value Value) ([]float64, error) {
 }
 
 func ParseStringList(json string) ([]string, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallStringList(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalStringList(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallStringList(value Value) ([]string, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalStringList(value Value) ([]string, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeArray {
 		if values, err := value.Array(); err != nil {
@@ -1782,15 +1782,15 @@ func UnmarshallStringList(value Value) ([]string, error) {
 }
 
 func ParseStringMap(json string) (map[string]string, error) {
-	if v, err := UnmarshallJson(json); err == nil {
-		return UnmarshallStringMap(*v)
+	if v, err := UnmarshalJson(json); err == nil {
+		return UnmarshalStringMap(*v)
 	} else {
 		return nil, err
 	}
 }
 
-func UnmarshallStringMap(value Value) (map[string]string, error) {
-	//func UnmarshallObjectList[T Unmarshallable](value Value, t reflect.Type) ([]T, error) {
+func UnmarshalStringMap(value Value) (map[string]string, error) {
+	//func UnmarshalObjectList[T Unmarshalable](value Value, t reflect.Type) ([]T, error) {
 
 	if value.Type() == TypeObject {
 		if values, err := value.Object(); err != nil {

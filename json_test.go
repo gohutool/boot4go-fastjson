@@ -49,18 +49,18 @@ type Test3 struct {
 	Json []*JsonObj
 }
 
-func (t *Test3) Unmarshall(value Value) error {
+func (t *Test3) Unmarshal(value Value) error {
 	t.Name = string(value.GetStringBytes("name"))
 	t.Age = value.GetInt("age")
 	t.Ok = value.GetBool("ok")
 
-	if list, err := UnmarshallObjectList(*value.Get("json"), &JsonObj{}); err == nil {
+	if list, err := UnmarshalObjectList(*value.Get("json"), &JsonObj{}); err == nil {
 		t.Json = list
 	} else {
 		return err
 	}
 
-	if m, err := UnmarshallObjectMap(*value.Get("map"), &JsonObj2{}); err == nil {
+	if m, err := UnmarshalObjectMap(*value.Get("map"), &JsonObj2{}); err == nil {
 		t.Map = m
 		return nil
 	} else {
@@ -68,21 +68,21 @@ func (t *Test3) Unmarshall(value Value) error {
 	}
 }
 
-func (t *Test) Unmarshall(value Value) error {
+func (t *Test) Unmarshal(value Value) error {
 	t.Name = string(value.GetStringBytes("name"))
 	t.Age = value.GetInt("age")
 	t.Ok = value.GetBool("ok")
 	t.Json = JsonObj{}
-	t.Json.Unmarshall(*value.Get("json"))
+	t.Json.Unmarshal(*value.Get("json"))
 	return nil
 }
 
-func (t *Test2) Unmarshall(value Value) error {
+func (t *Test2) Unmarshal(value Value) error {
 	t.Name = string(value.GetStringBytes("name"))
 	t.Age = value.GetInt("age")
 	t.Ok = value.GetBool("ok")
 
-	if list, err := UnmarshallObjectList(*value.Get("json"), &JsonObj{}); err == nil {
+	if list, err := UnmarshalObjectList(*value.Get("json"), &JsonObj{}); err == nil {
 		t.Json = list
 		return nil
 	} else {
@@ -90,14 +90,14 @@ func (t *Test2) Unmarshall(value Value) error {
 	}
 }
 
-func (t *JsonObj) Unmarshall(value Value) error {
+func (t *JsonObj) Unmarshal(value Value) error {
 	t.Name = value.GetString("name")
 	t.No = value.GetString("no")
 
 	return nil
 }
 
-func (t *JsonObj2) Unmarshall(value Value) error {
+func (t *JsonObj2) Unmarshal(value Value) error {
 	t.Name = value.GetString("name")
 	t.No = value.GetInt("no")
 
@@ -110,7 +110,7 @@ func TestJsonOne(t *testing.T) {
 	//test := &Test{Name: "AAA", Age: 10}
 	test := &Test{}
 
-	if err := UnmarshallObject(str, test); err == nil {
+	if err := UnmarshalObject(str, test); err == nil {
 		fmt.Printf("%+v", test)
 	} else {
 		fmt.Printf("%+v", err)
@@ -124,10 +124,10 @@ func TestJsonList(t *testing.T) {
 	//test := &Test{Name: "AAA", Age: 10}
 	test := &Test{}
 
-	if v, err := UnmarshallJson(str); err == nil {
+	if v, err := UnmarshalJson(str); err == nil {
 		fmt.Printf("JsonValue %+v\n", v)
 
-		if list, err := UnmarshallObjectList(*v, test); err == nil {
+		if list, err := UnmarshalObjectList(*v, test); err == nil {
 			fmt.Printf("List %+v\n", list)
 		} else {
 			fmt.Printf("Error %+v\n", err)
@@ -144,10 +144,10 @@ func TestJsonList2(t *testing.T) {
 	//test := &Test{Name: "AAA", Age: 10}
 	test := &Test2{}
 
-	if v, err := UnmarshallJson(str); err == nil {
+	if v, err := UnmarshalJson(str); err == nil {
 		fmt.Printf("JsonValue %+v\n", v)
 
-		if list, err := UnmarshallObjectList(*v, test); err == nil {
+		if list, err := UnmarshalObjectList(*v, test); err == nil {
 			fmt.Printf("List %+v\n", list)
 		} else {
 			fmt.Printf("Error %+v\n", err)
@@ -169,10 +169,10 @@ func TestJsonMap(t *testing.T) {
 	//test := &Test{Name: "AAA", Age: 10}
 	test := &Test2{}
 
-	if v, err := UnmarshallJson(str); err == nil {
+	if v, err := UnmarshalJson(str); err == nil {
 		fmt.Printf("JsonValue %+v\n", v)
 
-		if m, err := UnmarshallObjectMap(*v, test); err == nil {
+		if m, err := UnmarshalObjectMap(*v, test); err == nil {
 			fmt.Printf("List %+v\n", m)
 		} else {
 			fmt.Printf("Error %+v\n", err)
@@ -196,10 +196,10 @@ func TestJsonMap2(t *testing.T) {
 	//test := &Test{Name: "AAA", Age: 10}
 	test := &Test3{}
 
-	if v, err := UnmarshallJson(str); err == nil {
+	if v, err := UnmarshalJson(str); err == nil {
 		fmt.Printf("JsonValue %+v\n", v)
 
-		if m, err := UnmarshallObjectMap(*v, test); err == nil {
+		if m, err := UnmarshalObjectMap(*v, test); err == nil {
 			fmt.Printf("List %+v\n", m)
 		} else {
 			fmt.Printf("Error %+v\n", err)
