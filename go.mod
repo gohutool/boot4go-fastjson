@@ -1,3 +1,3 @@
-module github.com/valyala/fastjson
+module github.com/gohutool/boot4go-fastjson
 
-go 1.12
+go 1.18

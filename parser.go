@@ -2,7 +2,7 @@ package fastjson
 
 import (
 	"fmt"
-	"github.com/valyala/fastjson/fastfloat"
+	"github.com/gohutool/boot4go-fastjson/fastfloat"
 	"strconv"
 	"strings"
 	"unicode/utf16"
@@ -974,3 +974,29 @@ var (
 	valueFalse = &Value{t: TypeFalse}
 	valueNull  = &Value{t: TypeNull}
 )
+
+type Unmarshallable interface {
+	Unmarshall(value Value) error
+}
+
+func Unmarshall(value Value, obj Unmarshallable) error {
+	return obj.Unmarshall(value)
+}
+
+func UnmarshallJson(s string) (*Value, error) {
+	var p Parser
+	return p.Parse(s)
+}
+
+func UnmarshallObject(s string, obj Unmarshallable) error {
+	if obj == nil {
+		panic("Nil object can not unmarshall")
+	}
+
+	var p Parser
+	if v, err := p.Parse(s); err != nil {
+		return err
+	} else {
+		return Unmarshall(*v, obj)
+	}
+}
