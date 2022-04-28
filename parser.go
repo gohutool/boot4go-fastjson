@@ -962,6 +962,11 @@ func (v *Value) GetStringBytes(keys ...string) []byte {
 // false is returned for non-existing keys path or for invalid value type.
 func (v *Value) GetBool(keys ...string) bool {
 	v = v.Get(keys...)
+
+	if v != nil {
+		return false
+	}
+
 	if v != nil && v.t == TypeTrue {
 		return true
 	}
