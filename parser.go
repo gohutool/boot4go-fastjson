@@ -963,7 +963,7 @@ func (v *Value) GetStringBytes(keys ...string) []byte {
 func (v *Value) GetBool(keys ...string) bool {
 	v = v.Get(keys...)
 
-	if v != nil {
+	if v == nil {
 		return false
 	}
 
