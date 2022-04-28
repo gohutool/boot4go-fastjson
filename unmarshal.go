@@ -3,6 +3,7 @@ package fastjson
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 /**
@@ -80,6 +81,9 @@ func UnmarshalObjectMap[T Unmarshalable](value *Value, obj T) (map[string]T, err
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
@@ -121,6 +125,10 @@ func UnmarshalObjectList[T Unmarshalable](value *Value, obj T) ([]T, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
+
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -170,6 +178,9 @@ func UnmarshalBoolMap(value *Value) (map[string]bool, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
@@ -203,6 +214,9 @@ func UnmarshalBoolList(value *Value) ([]bool, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -251,6 +265,9 @@ func UnmarshalInt64Map(value *Value) (map[string]int64, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
@@ -284,6 +301,9 @@ func UnmarshalInt64List(value *Value) ([]int64, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -333,6 +353,9 @@ func UnmarshalIntMap(value *Value) (map[string]int, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
@@ -366,6 +389,9 @@ func UnmarshalIntList(value *Value) ([]int, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -415,6 +441,9 @@ func UnmarshalUintMap(value *Value) (map[string]uint, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
@@ -448,6 +477,9 @@ func UnmarshalUintList(value *Value) ([]uint, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -497,6 +529,9 @@ func UnmarshalUint64Map(value *Value) (map[string]uint64, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
@@ -530,6 +565,9 @@ func UnmarshalUint64List(value *Value) ([]uint64, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -578,6 +616,9 @@ func UnmarshalFloat64Map(value *Value) (map[string]float64, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
@@ -611,6 +652,9 @@ func UnmarshalFloat64List(value *Value) ([]float64, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -648,6 +692,9 @@ func UnmarshalStringList(value *Value) ([]string, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit array", value.s)
 	}
 }
@@ -685,6 +732,9 @@ func UnmarshalStringMap(value *Value) (map[string]string, error) {
 			return rtn, nil
 		}
 	} else {
+		if len(strings.TrimSpace(value.s)) == 0 {
+			return nil, nil
+		}
 		return nil, fmt.Errorf(" %q doesn't fit object", value.s)
 	}
 }
